@@ -1349,6 +1349,7 @@ export type Database = {
           max_redemptions: number
           metadata: Json | null
           min_subtotal_cents: number
+          percent_off: number | null
           redemptions: number
           reward_type: string | null
           service_type_restriction: string | null
@@ -1369,6 +1370,7 @@ export type Database = {
           max_redemptions?: number
           metadata?: Json | null
           min_subtotal_cents?: number
+          percent_off?: number | null
           redemptions?: number
           reward_type?: string | null
           service_type_restriction?: string | null
@@ -1389,6 +1391,7 @@ export type Database = {
           max_redemptions?: number
           metadata?: Json | null
           min_subtotal_cents?: number
+          percent_off?: number | null
           redemptions?: number
           reward_type?: string | null
           service_type_restriction?: string | null
@@ -1411,6 +1414,7 @@ export type Database = {
           booking_id: string | null
           code: string
           created_at: string
+          customer_email: string | null
           customer_id: string | null
           discount_cents: number
           id: string
@@ -1419,6 +1423,7 @@ export type Database = {
           booking_id?: string | null
           code: string
           created_at?: string
+          customer_email?: string | null
           customer_id?: string | null
           discount_cents: number
           id?: string
@@ -1427,6 +1432,7 @@ export type Database = {
           booking_id?: string | null
           code?: string
           created_at?: string
+          customer_email?: string | null
           customer_id?: string | null
           discount_cents?: number
           id?: string
