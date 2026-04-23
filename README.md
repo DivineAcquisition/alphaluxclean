@@ -1,73 +1,86 @@
-# Welcome to your Lovable project
+# AlphaLuxClean — Next.js
 
-## Project info
+This project was originally built with Vite + React + React Router and has been
+rebuilt on **Next.js 14 (App Router)** while preserving every existing page
+and Shadcn UI component.
 
-**URL**: https://lovable.dev/projects/fc9bf4c2-5143-4270-83ec-c7de4b1ed612
+## Tech Stack
 
-## How can I edit this code?
+- **Next.js 14** (App Router)
+- **TypeScript**
+- **React 18**
+- **Tailwind CSS** + **shadcn/ui** (Radix UI primitives)
+- **Supabase** for data + auth
+- **Stripe** for payments
 
-There are several ways of editing your application.
+## Project Structure
 
-**Use Lovable**
+```
+app/                         # Next.js App Router entry
+├── layout.tsx               # Root layout: html/body, metadata, global scripts
+├── ClientApp.tsx            # Client-only wrapper that mounts the SPA
+└── [[...slug]]/page.tsx     # Catch-all route that delegates to the SPA tree
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/fc9bf4c2-5143-4270-83ec-c7de4b1ed612) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+src/
+├── App.tsx                  # React Router tree (mounted client-side)
+├── index.css                # Global Tailwind styles + design tokens
+├── views/                   # Page components (formerly `src/pages/`)
+├── components/              # Shared UI + feature components
+│   └── ui/                  # shadcn/ui primitives
+├── contexts/                # React context providers
+├── hooks/                   # Custom hooks
+├── integrations/            # Third-party clients (Supabase, etc.)
+├── lib/                     # Utilities & shared libs
+├── services/                # Service-layer helpers
+└── utils/                   # Misc utilities
 ```
 
-**Edit a file directly in GitHub**
+### Why the catch-all route?
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+The application has ~90 existing page components and 80+ files that import
+`react-router-dom`. Rather than rewrite every file, the whole React Router tree
+is mounted inside a single Next.js App Router catch-all route
+(`app/[[...slug]]/page.tsx`). This gives us:
 
-**Use GitHub Codespaces**
+1. Next.js as the build system, server runtime, and framework (SSR-ready
+   layout, metadata, static assets, image optimization, middleware, API routes,
+   etc.).
+2. Zero churn on existing pages/components — they continue to work untouched.
+3. A path to progressively migrate individual routes into native Next.js
+   `app/…/page.tsx` files over time.
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Development
 
-## What technologies are used for this project?
+```bash
+npm install
+npm run dev    # http://localhost:8080
+```
 
-This project is built with:
+## Production build
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+```bash
+npm run build
+npm start
+```
 
-## How can I deploy this project?
+## Environment variables
 
-Simply open [Lovable](https://lovable.dev/projects/fc9bf4c2-5143-4270-83ec-c7de4b1ed612) and click on Share -> Publish.
+Copy `.env` (already present with public Supabase keys) or set the following:
 
-## Can I connect a custom domain to my Lovable project?
+```
+NEXT_PUBLIC_SUPABASE_URL=...
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=...
+NEXT_PUBLIC_SUPABASE_PROJECT_ID=...
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=...   # optional, Stripe also fetched from Supabase
+```
 
-Yes, you can!
+Legacy `VITE_*` aliases are still read as a fallback.
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## Migrating a page to native Next.js routes
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+To promote, e.g. `/pricing` to a native Next.js route:
+
+1. Create `app/pricing/page.tsx` and import the existing view component from
+   `@/views/Pricing`.
+2. Remove (or leave) its `<Route path="/pricing" …>` entry in `src/App.tsx` —
+   Next.js routes take precedence over the catch-all.
