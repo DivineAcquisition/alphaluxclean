@@ -100,6 +100,24 @@ serve(async (req) => {
       log("Webhook trigger warning", { error: (webhookErr as Error).message });
     }
 
+    // Push the full booking payload into GoHighLevel: upsert contact,
+    // backfill every matching custom field, apply the 'lead - booked'
+    // tag, and create an opportunity in the first active pipeline.
+    // Non-blocking — the customer has already seen confirmation by the
+    // time this resolves.
+    supabase.functions
+      .invoke('ghl-sync-booking', { body: { booking_id: bookingId } })
+      .then((res) => {
+        if (res.error) {
+          log('ghl-sync-booking error', { message: res.error.message });
+        } else {
+          log('ghl-sync-booking ok', res.data);
+        }
+      })
+      .catch((err) => {
+        log('ghl-sync-booking throw', { error: (err as Error).message });
+      });
+
     log("Saved successfully", { bookingId });
 
     return new Response(JSON.stringify({ success: true }), {
