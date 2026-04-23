@@ -89,11 +89,11 @@ export function calculateComprehensivePricing(
   // Base calculations
   const subtotalBeforeDiscounts = basePrice + addOnsPrice;
   
-  // Global 20% discount (already applied in base pricing)
+  // Global 50% texted promo discount (already applied in base pricing when relevant)
   const globalDiscount = {
-    percentage: 20,
-    dollarAmount: Math.round(subtotalBeforeDiscounts * 0.25 * 100) / 100, // Reverse calculate original 20% discount
-    description: 'Limited Time Promotion - 20% Off All Services'
+    percentage: 50,
+    dollarAmount: Math.round(subtotalBeforeDiscounts * 1 * 100) / 100,
+    description: 'Texted Promo Code - 50% Off Eligible Services'
   };
   
   // Frequency discounts (additional savings for recurring services)
@@ -140,11 +140,11 @@ export function calculateComprehensivePricing(
   
   if (promoCode) {
     // Example promo codes - can be expanded
-    if (promoCode.toUpperCase() === 'FIRST25') {
+    if (promoCode.toUpperCase() === 'TEXTED50' || promoCode.toUpperCase().startsWith('FRIEND50')) {
       promoDiscount = {
-        percentage: 25,
-        dollarAmount: Math.round(basePrice * 0.25 * 100) / 100,
-        description: 'FIRST25 - 25% Off First Cleaning'
+        percentage: 50,
+        dollarAmount: Math.round(basePrice * 0.5 * 100) / 100,
+        description: 'TEXTED50 - 50% Off First Cleaning'
       };
     } else if (promoCode.toUpperCase() === 'SAVE10') {
       promoDiscount = {

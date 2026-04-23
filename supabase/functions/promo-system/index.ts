@@ -113,14 +113,16 @@ serve(async (req) => {
         );
       }
 
-      const discountAmount = (promo.amount_cents / 100).toFixed(2);
+      const discountAmount = promo.percent_off
+        ? `${promo.percent_off}%`
+        : `$${(promo.amount_cents / 100).toFixed(2)}`;
       console.log('✅ [promo-system] Code valid:', normalizedCode, 'Discount: $' + discountAmount);
 
       return new Response(
         JSON.stringify({
           valid: true,
           discount_cents: promo.amount_cents,
-          display: `$${discountAmount} off applied`,
+          display: promo.percent_off ? `${discountAmount} off applied` : `${discountAmount} off applied`,
           code: normalizedCode
         }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -256,9 +258,14 @@ serve(async (req) => {
           .single();
 
         if (customer && booking) {
-          const discountAmount = (promo.amount_cents / 100).toFixed(2);
           const originalTotal = (booking.est_price || 0);
-          const newTotal = Math.max(0, originalTotal - (promo.amount_cents / 100)).toFixed(2);
+          const calculatedDiscount = promo.percent_off
+            ? originalTotal * (Number(promo.percent_off) / 100)
+            : (promo.amount_cents / 100);
+          const discountAmount = promo.percent_off
+            ? `${promo.percent_off}%`
+            : calculatedDiscount.toFixed(2);
+          const newTotal = Math.max(0, originalTotal - calculatedDiscount).toFixed(2);
 
           await supabase.functions.invoke('send-system-email', {
             body: {

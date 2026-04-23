@@ -15,7 +15,7 @@ const STORAGE_KEY = 'promo_session_start';
 
 /**
  * Hook to manage 24-hour promotional countdown timer
- * Tracks first visit and calculates time remaining for extra 5% discount
+ * Tracks first visit and calculates time remaining for the texted promo-code reminder.
  */
 export function usePromoCountdown(): PromoCountdown {
   const [timeRemaining, setTimeRemaining] = useState<number>(0);
