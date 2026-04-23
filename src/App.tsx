@@ -12,61 +12,61 @@ import { UTMTracker } from '@/components/UTMTracker';
 
 // Essential booking pages only
 import { DomainAwareHome } from '@/components/DomainAwareHome';
-import { Landing } from '@/pages/Landing';
+import { Landing } from '@/views/Landing';
 
 // Lazy load booking flow pages
-const BookZip = lazy(() => import('@/pages/book/Zip'));
-const BookSquareFeet = lazy(() => import('@/pages/book/SquareFeet'));
-const BookOffer = lazy(() => import('@/pages/book/Offer'));
-const BookCheckout = lazy(() => import('@/pages/book/Checkout'));
-const BookDetails = lazy(() => import('@/pages/book/Details'));
-const BookConfirmation = lazy(() => import('@/pages/book/Confirmation'));
-const BookSuccess = lazy(() => import('@/pages/book/Success')); // Keep for old bookings
-import OrderStatus from '@/pages/OrderStatus';
-import OrderConfirmation from '@/pages/OrderConfirmation';
-import ConfirmationPreview from '@/pages/ConfirmationPreview';
-import PaymentSuccess from '@/pages/PaymentSuccess';
-import { WebhookTest } from '@/pages/WebhookTest';
-import AdminLogin from '@/pages/AdminLogin';
-import AdminOTPLogin from '@/pages/AdminOTPLogin';
-import AdminAuthLogin from '@/pages/AdminAuthLogin';
-import AdminStatus from '@/pages/AdminStatus';
-import AdminEmailTemplates from '@/pages/AdminEmailTemplates';
-import AdminEmailLogs from '@/pages/AdminEmailLogs';
-import AdminEmailEvents from '@/pages/AdminEmailEvents';
-import AdminUsers from '@/pages/AdminUsers';
-import AdminDashboard from '@/pages/AdminDashboard';
+const BookZip = lazy(() => import('@/views/book/Zip'));
+const BookSquareFeet = lazy(() => import('@/views/book/SquareFeet'));
+const BookOffer = lazy(() => import('@/views/book/Offer'));
+const BookCheckout = lazy(() => import('@/views/book/Checkout'));
+const BookDetails = lazy(() => import('@/views/book/Details'));
+const BookConfirmation = lazy(() => import('@/views/book/Confirmation'));
+const BookSuccess = lazy(() => import('@/views/book/Success')); // Keep for old bookings
+import OrderStatus from '@/views/OrderStatus';
+import OrderConfirmation from '@/views/OrderConfirmation';
+import ConfirmationPreview from '@/views/ConfirmationPreview';
+import PaymentSuccess from '@/views/PaymentSuccess';
+import { WebhookTest } from '@/views/WebhookTest';
+import AdminLogin from '@/views/AdminLogin';
+import AdminOTPLogin from '@/views/AdminOTPLogin';
+import AdminAuthLogin from '@/views/AdminAuthLogin';
+import AdminStatus from '@/views/AdminStatus';
+import AdminEmailTemplates from '@/views/AdminEmailTemplates';
+import AdminEmailLogs from '@/views/AdminEmailLogs';
+import AdminEmailEvents from '@/views/AdminEmailEvents';
+import AdminUsers from '@/views/AdminUsers';
+import AdminDashboard from '@/views/AdminDashboard';
 import { AdminRoute } from '@/components/AdminRoute';
-import { ReferralLanding } from '@/pages/ReferralLanding';
-import { Referrals } from '@/pages/Referrals';
-import GetReferral from '@/pages/GetReferral';
-import LearnMore from '@/pages/LearnMore';
-import RecurringServices from '@/pages/RecurringServices';
-import StartRecurring from '@/pages/StartRecurring';
-import Pricing from '@/pages/Pricing';
-import Careers from '@/pages/Careers';
+import { ReferralLanding } from '@/views/ReferralLanding';
+import { Referrals } from '@/views/Referrals';
+import GetReferral from '@/views/GetReferral';
+import LearnMore from '@/views/LearnMore';
+import RecurringServices from '@/views/RecurringServices';
+import StartRecurring from '@/views/StartRecurring';
+import Pricing from '@/views/Pricing';
+import Careers from '@/views/Careers';
 
 // Dev Test Pages
-import { DevTest } from '@/pages/DevTest';
-import { DevTestScenarios } from '@/pages/DevTestScenarios';
-import { DevTestDatabase } from '@/pages/DevTestDatabase';
-import { DevTestPayments } from '@/pages/DevTestPayments';
-import { DevTestWebhooks } from '@/pages/DevTestWebhooks';
-import DevTestModeToggle from '@/pages/DevTestModeToggle';
-import BookingDebug from '@/pages/BookingDebug';
-import EmailTools from '@/pages/EmailTools';
-import HousecallProSettings from '@/pages/admin/HousecallProSettings';
-import HousecallProLogs from '@/pages/admin/HousecallProLogs';
-import HCPTestSuite from '@/pages/admin/HCPTestSuite';
-import PromoCodes from '@/pages/admin/PromoCodes';
-import BookingMonitor from '@/pages/admin/BookingMonitor';
-import BookingTester from '@/pages/admin/BookingTester';
-import DatabaseWatcher from '@/pages/admin/DatabaseWatcher';
-import ConversionOptimization from '@/pages/admin/ConversionOptimization';
-import Waitlist from '@/pages/Waitlist';
-import CallPage from '@/pages/CallPage';
+import { DevTest } from '@/views/DevTest';
+import { DevTestScenarios } from '@/views/DevTestScenarios';
+import { DevTestDatabase } from '@/views/DevTestDatabase';
+import { DevTestPayments } from '@/views/DevTestPayments';
+import { DevTestWebhooks } from '@/views/DevTestWebhooks';
+import DevTestModeToggle from '@/views/DevTestModeToggle';
+import BookingDebug from '@/views/BookingDebug';
+import EmailTools from '@/views/EmailTools';
+import HousecallProSettings from '@/views/admin/HousecallProSettings';
+import HousecallProLogs from '@/views/admin/HousecallProLogs';
+import HCPTestSuite from '@/views/admin/HCPTestSuite';
+import PromoCodes from '@/views/admin/PromoCodes';
+import BookingMonitor from '@/views/admin/BookingMonitor';
+import BookingTester from '@/views/admin/BookingTester';
+import DatabaseWatcher from '@/views/admin/DatabaseWatcher';
+import ConversionOptimization from '@/views/admin/ConversionOptimization';
+import Waitlist from '@/views/Waitlist';
+import CallPage from '@/views/CallPage';
 
-import NotFound from '@/pages/NotFound';
+import NotFound from '@/views/NotFound';
 import React from 'react';
 
 const queryClient = new QueryClient();
@@ -124,7 +124,7 @@ function App() {
             {/* Call Page */}
             <Route path="/call" element={
               <Suspense fallback={<div>Loading...</div>}>
-                {React.createElement(React.lazy(() => import('./pages/CallPage')))}
+                {React.createElement(React.lazy(() => import('./views/CallPage')))}
               </Suspense>
             } />
             
@@ -142,7 +142,7 @@ function App() {
             {/* Printable Pricing Sheet */}
             <Route path="/pricing-sheet" element={
               <Suspense fallback={<div>Loading...</div>}>
-                {React.createElement(React.lazy(() => import('./pages/PricingSheet')))}
+                {React.createElement(React.lazy(() => import('./views/PricingSheet')))}
               </Suspense>
             } />
             
@@ -166,7 +166,7 @@ function App() {
           <Route path="/admin/csr-booking" element={
             <AdminRoute requiredRole="ops">
               <Suspense fallback={<div>Loading...</div>}>
-                {React.createElement(React.lazy(() => import('./pages/admin/CSRBookingForm')))}
+                {React.createElement(React.lazy(() => import('./views/admin/CSRBookingForm')))}
               </Suspense>
             </AdminRoute>
           } />
@@ -199,7 +199,7 @@ function App() {
             {/* Payment Link Public Page */}
             <Route path="/pay/:bookingId" element={
               <Suspense fallback={<div>Loading...</div>}>
-                {React.createElement(React.lazy(() => import('./pages/PaymentLinkPage')))}
+                {React.createElement(React.lazy(() => import('./views/PaymentLinkPage')))}
               </Suspense>
             } />
             
@@ -212,12 +212,12 @@ function App() {
             <Route path="/dev-test/test-mode" element={<DevTestModeToggle />} />
             <Route path="/dev-test/cleanup" element={
               <Suspense fallback={<div>Loading...</div>}>
-                {React.createElement(React.lazy(() => import('./pages/DevTestCleanup')))}
+                {React.createElement(React.lazy(() => import('./views/DevTestCleanup')))}
               </Suspense>
             } />
             <Route path="/demo-booking" element={
               <Suspense fallback={<div>Loading...</div>}>
-                {React.createElement(React.lazy(() => import('./pages/DemoBooking')))}
+                {React.createElement(React.lazy(() => import('./views/DemoBooking')))}
               </Suspense>
             } />
             <Route path="/booking-debug" element={<BookingDebug />} />

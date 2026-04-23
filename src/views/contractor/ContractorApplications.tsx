@@ -1,5 +1,5 @@
 import { ContractorPortalLayout } from "@/components/contractor/ContractorPortalLayout";
-import ApplicationManager from "@/pages/ApplicationManager";
+import ApplicationManager from "@/views/ApplicationManager";
 
 export default function ContractorApplications() {
   return (
