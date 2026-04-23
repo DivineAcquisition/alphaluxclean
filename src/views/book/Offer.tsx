@@ -10,7 +10,7 @@ import { useFacebookPixel } from '@/hooks/useFacebookPixel';
 import { HOME_SIZE_RANGES, resolveHomeSizeId } from '@/lib/new-pricing-system';
 import {
   NEW_CUSTOMER_PROMO_ACTIVE,
-  NEW_CUSTOMER_PROMO_CODE,
+  NEW_CUSTOMER_PROMO_CODE as FALLBACK_PROMO_CODE,
   NEW_CUSTOMER_PROMO_PERCENT,
   previewPromoDiscount,
 } from '@/lib/promo';
@@ -66,6 +66,15 @@ export default function BookingOffer() {
     null,
   );
   const pickerRef = useRef<HTMLDivElement | null>(null);
+
+  // If the customer was issued a personal ALCxxx code on the ZIP
+  // step (emit-lead-webhook → assign-lead-promo), use it here. Falls
+  // back to the shared ALC2026 campaign code if none was assigned
+  // (e.g. the webhook failed silently).
+  const NEW_CUSTOMER_PROMO_CODE =
+    bookingData.promoCode && /^ALC[A-Z0-9]{3}$/i.test(bookingData.promoCode)
+      ? bookingData.promoCode.toUpperCase()
+      : FALLBACK_PROMO_CODE;
 
   const resolvedHomeSizeId = resolveHomeSizeId(bookingData.homeSizeId);
   const selectedHomeSize = HOME_SIZE_RANGES.find(
@@ -273,10 +282,12 @@ export default function BookingOffer() {
       frequency,
       date: scheduledDate,
       timeSlot: scheduledTimeSlot,
+      // Keep the code that was actually applied (either the
+      // customer's personal ALCxxx or the shared fallback).
       promoCode:
         NEW_CUSTOMER_PROMO_ACTIVE && promoSavings > 0
           ? NEW_CUSTOMER_PROMO_CODE
-          : '',
+          : bookingData.promoCode || '',
       promoDiscount: NEW_CUSTOMER_PROMO_ACTIVE ? promoSavings : 0,
     });
 

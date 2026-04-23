@@ -167,6 +167,22 @@ export default function BookingZip() {
         // Show success toast
         toast.success('Information saved! Taking you to the next step...');
       }
+
+      // The emit-lead-webhook edge function also provisions the
+      // customer's personal ALCxxx promo code (idempotent on email).
+      // Persist it into BookingContext now so the Offer + Checkout
+      // steps can render the personalized discount and server-side
+      // redemption stays keyed to *this* customer.
+      const assignedPromo = (data as any)?.promo as
+        | { code?: string; percent_off?: number }
+        | undefined;
+      if (assignedPromo?.code) {
+        updateBookingData({
+          promoCode: assignedPromo.code,
+          // Discount amount is computed per-offer at the Offer step;
+          // storing the code alone is enough here.
+        } as any);
+      }
       
       // Track booking progress for abandoned checkout detection
       supabase.functions.invoke('track-booking-progress', {
