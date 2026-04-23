@@ -4,6 +4,7 @@
  */
 
 import { supabase } from '@/integrations/supabase/client';
+import { getPromoDiscountCents, TEXT_PROMO_DISCOUNT_PERCENT } from '@/lib/promotional-offer';
 
 export interface PromoApplication {
   code: string;
@@ -13,7 +14,7 @@ export interface PromoApplication {
 }
 
 /**
- * Apply 20% first clean discount
+ * Apply 50% first clean discount when customer uses their texted promo code
  */
 export async function applyFirst20Discount(
   subtotalCents: number,
@@ -30,12 +31,12 @@ export async function applyFirst20Discount(
     throw new Error('First clean discount already used');
   }
 
-  const discountPercent = 20;
-  const discountAmount = Math.round(subtotalCents * 0.20);
+  const discountPercent = TEXT_PROMO_DISCOUNT_PERCENT;
+  const discountAmount = getPromoDiscountCents(subtotalCents);
   const finalPrice = subtotalCents - discountAmount;
 
   return {
-    code: 'PROMO_FIRST20',
+    code: 'PROMO_TEXT50',
     discountPercent,
     discountAmount,
     finalPrice
@@ -43,7 +44,7 @@ export async function applyFirst20Discount(
 }
 
 /**
- * Apply 25% first clean discount (24-hour urgency offer)
+ * Legacy helper kept for compatibility; now maps to the texted 50% promo
  */
 export async function applyFirst25Discount(
   subtotalCents: number,
@@ -60,12 +61,12 @@ export async function applyFirst25Discount(
     throw new Error('First clean discount already used');
   }
 
-  const discountPercent = 25;
-  const discountAmount = Math.round(subtotalCents * 0.25);
+  const discountPercent = TEXT_PROMO_DISCOUNT_PERCENT;
+  const discountAmount = getPromoDiscountCents(subtotalCents);
   const finalPrice = subtotalCents - discountAmount;
 
   return {
-    code: 'PROMO_FIRST25_24HR',
+    code: 'PROMO_TEXT50',
     discountPercent,
     discountAmount,
     finalPrice
@@ -73,7 +74,7 @@ export async function applyFirst25Discount(
 }
 
 /**
- * Check if customer can use 25% time-sensitive discount
+ * Check if customer can use the texted 50% discount
  */
 export async function canApplyFirst25(customerEmail: string): Promise<boolean> {
   const canApply = await canApplyFirst20(customerEmail);
@@ -100,7 +101,7 @@ export async function markFirstCleanUsed(customerEmail: string): Promise<void> {
 }
 
 /**
- * Validate that 20% discount can be applied
+ * Validate that the first-clean texted promo can be applied
  */
 export async function canApplyFirst20(customerEmail: string): Promise<boolean> {
   const { data: customer } = await supabase
