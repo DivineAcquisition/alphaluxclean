@@ -159,6 +159,46 @@ export const HOME_SIZE_RANGES: HomeSizeRange[] = [
   }
 ];
 
+// Aliases that map legacy or shorthand home-size ids (persisted in older
+// customer localStorage) back to the canonical ids in HOME_SIZE_RANGES.
+// Keep this list strictly additive — never rename an existing id.
+const HOME_SIZE_ID_ALIASES: Record<string, string> = {
+  // Legacy sub-1,000 sq ft bucket → smallest current tier.
+  under_1000: '1000_1500',
+  '0_1000': '1000_1500',
+  // Older half-step buckets that were merged into the 1,000–1,499 tier.
+  '1000_1200': '1000_1500',
+  '1200_1500': '1000_1500',
+  // Intermediate tier that collapsed into 1,500–1,999.
+  '1500_1800': '1501_2000',
+  '1800_2000': '1501_2000',
+  // 2,000–2,499 legacy shortcuts.
+  '2000_2200': '2001_2500',
+  '2200_2500': '2001_2500',
+  '2200_2800': '2501_3000',
+  '2500_2800': '2501_3000',
+  // 2,800–3,600 → merged into 3,000–3,999 today.
+  '2800_3600': '3001_4000',
+  '3001_3500': '3001_4000',
+  '3501_4000': '3001_4000',
+  // 3,600–5,000 → split into 3,000–3,999 / 4,000–4,999.
+  '3600_5000': '4001_5000',
+  '4001_4500': '4001_5000',
+  '4501_5000': '4001_5000',
+  '5000_plus': '5001_plus',
+};
+
+/**
+ * Resolve any persisted home-size id into a canonical id present in
+ * HOME_SIZE_RANGES. Falls back to the 2,000–2,499 tier when nothing
+ * matches so the Offer page never renders with an undefined size.
+ */
+export function resolveHomeSizeId(id: string | undefined | null): string {
+  if (!id) return '2001_2500';
+  if (HOME_SIZE_RANGES.some((tier) => tier.id === id)) return id;
+  return HOME_SIZE_ID_ALIASES[id] || '2001_2500';
+}
+
 // Universal Hybrid Pricing Configuration
 export const DEFAULT_PRICING_CONFIG: PricingConfig = {
   states: [
