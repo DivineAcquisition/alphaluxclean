@@ -16,7 +16,8 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0';
 import {
   buildCustomFieldMap,
   createGhlClient,
-  resolveFieldId,
+  pickBookedPipelineStage,
+  resolveFieldIdWithFallback as resolveFieldId,
   type GHLCustomFieldValue,
 } from '../_shared/ghl-client.ts';
 
@@ -90,39 +91,64 @@ serve(async (req) => {
       if (id) customFields.push({ id, field_value: value });
     };
 
-    push(['promo_code', 'promocode', 'customer_promo_code'], booking.promo_code);
-    push(['promo_discount', 'promo_discount_amount'], booking.promo_discount_cents
+    push(['promo_code'], booking.promo_code);
+    push(['discount_cash_value'], booking.promo_discount_cents
       ? booking.promo_discount_cents / 100
       : undefined);
     push(['service_type'], booking.service_type);
-    push(['offer_name', 'offer'], booking.offer_name);
-    push(['offer_type'], booking.offer_type);
-    push(['frequency', 'service_frequency'], booking.frequency);
-    push(['service_date', 'scheduled_date'], booking.service_date);
-    push(['time_slot', 'scheduled_time'], booking.time_slot);
-    push(['deposit_amount', 'deposit'], booking.deposit_amount);
-    push(['booking_total', 'total_amount'], booking.est_price || booking.base_price);
-    push(['balance_due'], booking.balance_due);
-    push(['payment_status'], booking.payment_status);
-    push(['booking_id'], booking.id);
-    push(['booking_url'], `https://app.alphaluxclean.com/book/confirmation?booking_id=${booking.id}`);
-    push(['zip_code', 'postal_code'], booking.zip_code || customer.postal_code);
-    push(['home_size'], booking.home_size);
-    push(['address_line_1', 'address1', 'service_address'], booking.address_line1 || customer.address_line1);
-    push(['address_line_2', 'address2'], booking.address_line2 || customer.address_line2);
-    push(['city'], customer.city);
-    push(['state'], customer.state);
-    push(['special_instructions', 'notes'], booking.special_instructions || booking.notes);
+    push(['service_frequency'], booking.frequency);
+    push(['frequency'], booking.frequency);
+
+    push(['service_date'], booking.service_date);
+    push(
+      ['service_date_time', 'service_date__time'],
+      booking.service_date && booking.time_slot
+        ? `${booking.service_date} \u00b7 ${booking.time_slot}`
+        : booking.service_date || undefined,
+    );
+    push(['service_start_time'], booking.time_slot);
+    push(['service_end_time'], booking.time_slot);
+
+    push(['booking_amount'], booking.est_price || booking.base_price);
+    push(['original_price'], booking.base_price);
+    push(['deposit_amount'], booking.deposit_amount);
+    push(['remaining_balance'], booking.balance_due);
+    push(['mrr_est'], booking.mrr);
+    push(['arr_est'], booking.arr);
+
+    const propertyDetails = booking.property_details || {};
+    push(['sqft'], propertyDetails.sqft || booking.home_size);
+    push(['bedrooms'], propertyDetails.bedrooms);
+    push(['bathrooms'], propertyDetails.bathrooms);
+    push(['property_type'], propertyDetails.property_type);
+    push(['flooring'], propertyDetails.flooring);
+    push(['entry_instructions'], booking.special_instructions || booking.notes);
+    push(['preferred_contact_method'], propertyDetails.preferred_contact_method);
+
+    push(['conversion_status'], booking.is_recurring ? 'Recurring Active' : 'Offer Sent');
+    push(['subscription_status'], booking.is_recurring ? 'Active Recurring' : 'One-Time');
+
     push(['utm_source'], booking.utms?.utm_source);
     push(['utm_medium'], booking.utms?.utm_medium);
     push(['utm_campaign'], booking.utms?.utm_campaign);
     push(['utm_content'], booking.utms?.utm_content);
-    push(['utm_term'], booking.utms?.utm_term);
     push(['landing_page'], booking.utms?.landing_page);
-    push(['referrer'], booking.utms?.referrer);
-    push(['stripe_payment_intent', 'payment_intent'], booking.stripe_payment_intent_id);
-    push(['receipt_url', 'stripe_receipt'], booking.receipt_url);
-    push(['is_recurring'], booking.is_recurring ? 'true' : 'false');
+    push(['tracking_attribution'], booking.attribution_method);
+    if (booking.utms) {
+      push(['utm_fields'], JSON.stringify(booking.utms));
+    }
+    push(['fb_lead_id'], booking.utms?.fb_lead_id);
+
+    push(['stripe_id'], booking.stripe_payment_intent_id || booking.stripe_checkout_session_id);
+    push(['payment_link'], booking.receipt_url);
+    push(['invoice_link'], booking.balance_invoice_url);
+    push(
+      ['manage_link'],
+      booking.manage_token
+        ? `https://app.alphaluxclean.com/order-status?token=${booking.manage_token}`
+        : undefined,
+    );
+    push(['referral_code'], booking.referrer_code);
 
     const tags = [
       'lead - booked',
@@ -166,16 +192,17 @@ serve(async (req) => {
         .eq('id', booking.id);
     }
 
-    // 3. Create an opportunity in the first active pipeline.
+    // 3. Create an opportunity in the "Booked" stage of the AGP -
+    //    Sales & Growth Pipeline (falls back to a "Closed - Won" /
+    //    "Paid / Appt Confirmed" stage on any other pipeline).
     let opportunityId: string | null = null;
     if (ghlContactId) {
       try {
-        const pipelines = await ghl.listPipelines();
-        const firstPipeline = pipelines.pipelines?.[0];
-        if (firstPipeline && firstPipeline.stages?.[0]) {
+        const { pipelineId, stageId, label } = await pickBookedPipelineStage(ghl);
+        if (pipelineId && stageId) {
           const opp = await ghl.createOpportunity({
-            pipelineId: firstPipeline.id,
-            stageId: firstPipeline.stages[0].id,
+            pipelineId,
+            stageId,
             name: `${fullName || email} · ${booking.offer_name || booking.service_type || 'Booking'}`,
             status: 'won',
             contactId: ghlContactId,
@@ -184,7 +211,7 @@ serve(async (req) => {
             customFields,
           });
           opportunityId = opp.opportunityId || null;
-          log('opportunity', { ok: opp.ok, opportunityId });
+          log('opportunity', { ok: opp.ok, opportunityId, pipeline: label });
         } else {
           log('no pipeline found — skipping opportunity');
         }

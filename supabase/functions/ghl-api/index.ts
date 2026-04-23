@@ -1,18 +1,19 @@
 // GHL API gateway — thin admin wrapper around the shared ghl-client.
 //
 // Exposed actions:
-//   - list_custom_fields  → GET /locations/:locationId/customFields
-//   - list_pipelines      → GET /opportunities/pipelines
-//   - upsert_contact      → POST /contacts/upsert
-//   - add_tags            → POST /contacts/:id/tags
-//   - find_contact        → GET  /contacts/search/duplicate
-//   - passthrough         → arbitrary request (for debugging)
+//   - list_custom_fields    → GET /locations/:locationId/customFields
+//   - list_pipelines        → GET /opportunities/pipelines
+//   - resolve_booked_stage  → compute AGP "Booked" (or closest equivalent)
+//   - upsert_contact        → POST /contacts/upsert
+//   - add_tags              → POST /contacts/:id/tags
+//   - find_contact          → GET  /contacts/search/duplicate
+//   - passthrough           → arbitrary request (debugging)
 //
-// Requires Supabase secrets:
-//   - GHL_PRIVATE_INTEGRATION_TOKEN
-//   - GHL_LOCATION_ID
+// Uses GHL_PRIVATE_INTEGRATION_TOKEN + GHL_LOCATION_ID env vars if set,
+// otherwise falls back to the location-scoped defaults baked into the
+// shared ghl-client module.
 import { serve } from 'https://deno.land/std@0.190.0/http/server.ts';
-import { createGhlClient } from '../_shared/ghl-client.ts';
+import { createGhlClient, pickBookedPipelineStage } from '../_shared/ghl-client.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -22,9 +23,7 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
-  }
+  if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   try {
     const ghl = createGhlClient();
@@ -39,6 +38,10 @@ serve(async (req) => {
       case 'list_pipelines': {
         const res = await ghl.listPipelines();
         return json({ success: res.ok, pipelines: res.pipelines, raw: res.data });
+      }
+      case 'resolve_booked_stage': {
+        const res = await pickBookedPipelineStage(ghl);
+        return json({ success: !!res.pipelineId, ...res });
       }
       case 'find_contact': {
         if (!body?.email) return json({ success: false, error: 'email required' }, 400);

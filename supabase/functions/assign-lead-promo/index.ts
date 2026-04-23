@@ -35,7 +35,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0';
 import {
   buildCustomFieldMap,
   createGhlClient,
-  resolveFieldId,
+  resolveFieldIdWithFallback as resolveFieldId,
 } from '../_shared/ghl-client.ts';
 
 const corsHeaders = {
