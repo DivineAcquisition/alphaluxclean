@@ -1,6 +1,7 @@
 import React from 'react';
 import { Sparkles } from 'lucide-react';
 import { HOME_SIZE_RANGES } from '@/lib/new-pricing-system';
+import { TEXT_PROMO_LABEL } from '@/lib/promotional-offer';
 
 export function PriceTeaserBanner() {
   // Get the minimum regular price from pricing ranges
@@ -16,9 +17,8 @@ export function PriceTeaserBanner() {
       .map(range => range.deepPrice)
   );
 
-  // Calculate discounted prices (10% off regular, 20% off deep)
-  const minRegularDiscounted = Math.round(minRegularPrice * 0.90);
-  const minDeepDiscounted = Math.round(minDeepPrice * 0.80);
+  const minRegularDiscounted = Math.round(minRegularPrice * 0.5);
+  const minDeepDiscounted = Math.round(minDeepPrice * 0.5);
 
   return (
     <div className="mb-6 md:mb-8">
@@ -40,16 +40,16 @@ export function PriceTeaserBanner() {
               <span>
                 Standard cleaning{' '}
                 <span className="font-semibold text-primary">${minRegularDiscounted}</span>
-                <span className="ml-1.5 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-green-500/10 text-green-700 border border-green-500/20">
-                  10% OFF
+                 <span className="ml-1.5 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-green-500/10 text-green-700 border border-green-500/20">
+                   {TEXT_PROMO_LABEL}
                 </span>
               </span>
               <span className="hidden sm:inline">•</span>
               <span>
                 Deep cleaning{' '}
                 <span className="font-semibold text-primary">${minDeepDiscounted}</span>
-                <span className="ml-1.5 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/20 text-primary border border-primary/30">
-                  20% OFF
+                 <span className="ml-1.5 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/20 text-primary border border-primary/30">
+                   {TEXT_PROMO_LABEL}
                 </span>
               </span>
             </div>
