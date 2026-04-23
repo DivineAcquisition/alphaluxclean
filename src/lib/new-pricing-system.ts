@@ -3,6 +3,12 @@
  * Formula: Base = $25/hr × cleaners × hours × state_multiplier × service_multiplier × frequency_discount
  */
 
+import {
+  applyBasePriceIncrease,
+  getPromoDiscountAmount,
+  getPromoPrice,
+} from './promotional-offer';
+
 export interface HomeSizeRange {
   id: string;
   label: string;
@@ -72,11 +78,11 @@ export const HOME_SIZE_RANGES: HomeSizeRange[] = [
     minSqft: 1000,
     maxSqft: 1499,
     bedroomRange: '1–2 BR condos/homes',
-    deepPrice: 250,              // Tester price
-    maintenancePrice: 170,       // Regular maintenance
-    ninetyDayPrice: 699,         // Bundle: deep $250 + 3×$170 = $760, with ~8% discount
-    regularPrice: 170,
-    moveInOutPrice: 315
+    deepPrice: applyBasePriceIncrease(250),
+    maintenancePrice: applyBasePriceIncrease(170),
+    ninetyDayPrice: applyBasePriceIncrease(699),
+    regularPrice: applyBasePriceIncrease(170),
+    moveInOutPrice: applyBasePriceIncrease(315)
   },
   {
     id: '1501_2000',
@@ -84,11 +90,11 @@ export const HOME_SIZE_RANGES: HomeSizeRange[] = [
     minSqft: 1500,
     maxSqft: 1999,
     bedroomRange: '2–3 BR homes',
-    deepPrice: 300,              // +$50 from previous tier
-    maintenancePrice: 195,
-    ninetyDayPrice: 799,         // Bundle: deep $300 + 3×$195 = $885, with ~10% discount
-    regularPrice: 195,
-    moveInOutPrice: 385
+    deepPrice: applyBasePriceIncrease(300),
+    maintenancePrice: applyBasePriceIncrease(195),
+    ninetyDayPrice: applyBasePriceIncrease(799),
+    regularPrice: applyBasePriceIncrease(195),
+    moveInOutPrice: applyBasePriceIncrease(385)
   },
   {
     id: '2001_2500',
@@ -96,11 +102,11 @@ export const HOME_SIZE_RANGES: HomeSizeRange[] = [
     minSqft: 2000,
     maxSqft: 2499,
     bedroomRange: '3 BR homes',
-    deepPrice: 350,              // +$50 from previous tier
-    maintenancePrice: 220,
-    ninetyDayPrice: 949,         // Bundle: deep $350 + 3×$220 = $1,010, with ~6% discount
-    regularPrice: 220,
-    moveInOutPrice: 455
+    deepPrice: applyBasePriceIncrease(350),
+    maintenancePrice: applyBasePriceIncrease(220),
+    ninetyDayPrice: applyBasePriceIncrease(949),
+    regularPrice: applyBasePriceIncrease(220),
+    moveInOutPrice: applyBasePriceIncrease(455)
   },
   {
     id: '2501_3000',
@@ -108,11 +114,11 @@ export const HOME_SIZE_RANGES: HomeSizeRange[] = [
     minSqft: 2500,
     maxSqft: 2999,
     bedroomRange: '3–4 BR homes',
-    deepPrice: 400,              // +$50 from previous tier
-    maintenancePrice: 250,
-    ninetyDayPrice: 1099,        // Bundle: deep $400 + 3×$250 = $1,150, with ~4% discount
-    regularPrice: 250,
-    moveInOutPrice: 525
+    deepPrice: applyBasePriceIncrease(400),
+    maintenancePrice: applyBasePriceIncrease(250),
+    ninetyDayPrice: applyBasePriceIncrease(1099),
+    regularPrice: applyBasePriceIncrease(250),
+    moveInOutPrice: applyBasePriceIncrease(525)
   },
   {
     id: '3001_4000',
@@ -120,11 +126,11 @@ export const HOME_SIZE_RANGES: HomeSizeRange[] = [
     minSqft: 3000,
     maxSqft: 3999,
     bedroomRange: '4 BR homes',
-    deepPrice: 450,              // +$50 from previous tier
-    maintenancePrice: 280,
-    ninetyDayPrice: 1249,        // Bundle: deep $450 + 3×$280 = $1,290, with ~3% discount
-    regularPrice: 280,
-    moveInOutPrice: 595
+    deepPrice: applyBasePriceIncrease(450),
+    maintenancePrice: applyBasePriceIncrease(280),
+    ninetyDayPrice: applyBasePriceIncrease(1249),
+    regularPrice: applyBasePriceIncrease(280),
+    moveInOutPrice: applyBasePriceIncrease(595)
   },
   {
     id: '4001_5000',
@@ -132,11 +138,11 @@ export const HOME_SIZE_RANGES: HomeSizeRange[] = [
     minSqft: 4000,
     maxSqft: 4999,
     bedroomRange: '4–5 BR homes',
-    deepPrice: 500,              // +$50 from previous tier
-    maintenancePrice: 310,
-    ninetyDayPrice: 1399,        // Bundle: deep $500 + 3×$310 = $1,430, with ~2% discount
-    regularPrice: 310,
-    moveInOutPrice: 665
+    deepPrice: applyBasePriceIncrease(500),
+    maintenancePrice: applyBasePriceIncrease(310),
+    ninetyDayPrice: applyBasePriceIncrease(1399),
+    regularPrice: applyBasePriceIncrease(310),
+    moveInOutPrice: applyBasePriceIncrease(665)
   },
   {
     id: '5001_plus',
@@ -145,9 +151,9 @@ export const HOME_SIZE_RANGES: HomeSizeRange[] = [
     maxSqft: 999999,
     bedroomRange: 'Custom Quote Required - Call (972) 559-0223',
     requiresEstimate: true,
-    deepPrice: 550,              // Starting point for custom quotes
-    maintenancePrice: 350,       // Starting point
-    ninetyDayPrice: 1599,        // Starting point: deep $550 + 3×$350 = $1,600
+    deepPrice: applyBasePriceIncrease(550),
+    maintenancePrice: applyBasePriceIncrease(350),
+    ninetyDayPrice: applyBasePriceIncrease(1599),
     regularPrice: 0,
     moveInOutPrice: 0
   }
@@ -234,11 +240,11 @@ export function calculateNewPricing(
   let savings = '';
   let recurringDetails;
 
-  // For one-time cleanings: apply $50 flat discount
+  // For one-time cleanings: display 50% off when customer uses the texted promo code
   if (frequencyId === 'one_time') {
-    discountAmount = 50;
-    finalPrice = basePrice - discountAmount;
-    savings = 'Save $50 on your one-time cleaning!';
+    discountAmount = getPromoDiscountAmount(basePrice);
+    finalPrice = getPromoPrice(basePrice);
+    savings = 'Use your texted promo code to unlock 50% off this one-time cleaning.';
   }
   // For recurring cleanings (Regular Clean only): apply frequency-specific discount
   else if (serviceTypeId === 'regular' && frequency.cleansPerMonth) {

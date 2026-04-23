@@ -7,16 +7,11 @@ import { Badge } from '@/components/ui/badge';
 import { useBooking } from '@/contexts/BookingContext';
 import { useBookingProgress } from '@/hooks/useBookingProgress';
 import { HOME_SIZE_RANGES } from '@/lib/new-pricing-system';
+import { TEXT_PROMO_CODE_MESSAGE, TEXT_PROMO_LABEL, getPromoDiscountAmount, getPromoPrice } from '@/lib/promotional-offer';
 import { Check, Sparkles, CalendarCheck, Info, Gift } from 'lucide-react';
 import { CleaningShowcaseCarousel } from '@/components/booking/CleaningShowcaseCarousel';
 import { ServiceDetailsModal } from '@/components/booking/ServiceDetailsModal';
 import { GoogleGuaranteedBadge } from '@/components/trust/GoogleGuaranteedBadge';
-
-// NEW CUSTOMER SPECIAL PRICING
-const PROMO = {
-  deepCleanFlatDiscount: 25, // $25 off first deep clean
-  recurringDiscount: 0.10, // 10% off recurring service
-};
 
 export default function BookingOffer() {
   const navigate = useNavigate();
@@ -33,12 +28,10 @@ export default function BookingOffer() {
   const baseDeepPrice = selectedHomeSize?.deepPrice || 250;
   const maintenancePrice = selectedHomeSize?.maintenancePrice || 170;
   
-  // NEW CUSTOMER SPECIAL: 20% off deep clean
-  const deepCleanPrice = baseDeepPrice - PROMO.deepCleanFlatDiscount;
-  
-  // NEW CUSTOMER SPECIAL: 10% off recurring maintenance
-  const recurringPrice = Math.round(maintenancePrice * (1 - PROMO.recurringDiscount));
-  const recurringSavings = maintenancePrice - recurringPrice;
+  const deepCleanPrice = getPromoPrice(baseDeepPrice);
+  const deepCleanSavings = getPromoDiscountAmount(baseDeepPrice);
+  const recurringPrice = getPromoPrice(maintenancePrice);
+  const recurringSavings = getPromoDiscountAmount(maintenancePrice);
 
   useEffect(() => {
     if (!bookingData.zipCode || !bookingData.homeSizeId) {
@@ -111,8 +104,8 @@ export default function BookingOffer() {
       isRecurring,
       serviceType,
       frequency,
-      promoCode: 'WELCOME2025',
-      promoDiscount: offerType === 'deep_clean' ? (baseDeepPrice - deepCleanPrice) : recurringSavings
+      promoCode: 'TEXTED50',
+      promoDiscount: offerType === 'deep_clean' ? deepCleanSavings : recurringSavings
     });
 
     // Track progress for abandoned checkout
@@ -138,10 +131,10 @@ export default function BookingOffer() {
               <Gift className="h-6 w-6 text-primary-foreground shrink-0 hidden md:block" />
               <div>
                 <p className="text-primary-foreground font-bold text-sm md:text-base">
-                  New Customer Special: $25 OFF Your First Deep Clean + 10% OFF Recurring
+                  New Customer Special: {TEXT_PROMO_LABEL} with your texted promo code
                 </p>
                 <p className="text-primary-foreground/75 text-xs md:text-sm">
-                  First-time customers only — claim your discount today
+                  {TEXT_PROMO_CODE_MESSAGE}
                 </p>
               </div>
             </div>
@@ -167,7 +160,7 @@ export default function BookingOffer() {
             Your First Clean, for Less
           </h1>
           <p className="text-lg text-muted-foreground">
-            Choose your service and lock in your new customer savings.
+            Choose your service and enter the promo code texted to you to unlock 50% off.
           </p>
           <div className="flex justify-center mt-4">
             <GoogleGuaranteedBadge variant="compact" />
@@ -175,7 +168,7 @@ export default function BookingOffer() {
         </div>
 
         <div className="grid gap-6 md:gap-8 md:grid-cols-2">
-          {/* Deep Clean - One Time with 20% Off */}
+          {/* Deep Clean - One Time with texted 50% Off */}
           <Card 
             className={`relative p-6 md:p-8 cursor-pointer transition-all duration-200 hover:shadow-lg border-2 ${
               selectedOffer === 'deep_clean' 
@@ -193,7 +186,7 @@ export default function BookingOffer() {
             <div className="mb-4">
               <Badge className="bg-primary/10 text-primary px-3 py-1 font-bold">
                 <Gift className="h-3 w-3 mr-1.5" />
-                $25 Off — New Customer Special
+                {TEXT_PROMO_LABEL} with texted code
               </Badge>
             </div>
 
@@ -212,7 +205,7 @@ export default function BookingOffer() {
                 </span>
               </div>
               <p className="text-sm text-muted-foreground mt-2">
-                Pay only ${Math.round(deepCleanPrice * 0.25)} today (25% deposit)
+                Use your texted promo code to save ${deepCleanSavings}. Pay only ${Math.round(deepCleanPrice * 0.25)} today.
               </p>
             </div>
 
@@ -259,7 +252,7 @@ export default function BookingOffer() {
             </div>
           </Card>
 
-          {/* Recurring Maintenance - 10% Off */}
+          {/* Recurring Maintenance - 50% Off with texted code */}
           <Card 
             className={`relative p-6 md:p-8 cursor-pointer transition-all duration-200 hover:shadow-lg border-2 ${
               selectedOffer === 'recurring' 
@@ -268,7 +261,7 @@ export default function BookingOffer() {
             }`} 
             onClick={() => handleSelectOffer(
               'recurring', 
-              'Recurring Maintenance — 10% Off', 
+               'Recurring Maintenance — 50% Off with Promo Code', 
               recurringPrice, 
               1, 
               true
@@ -282,7 +275,7 @@ export default function BookingOffer() {
             <div className="mb-4 mt-2">
               <Badge className="bg-primary/10 text-primary px-3 py-1 font-bold">
                 <CalendarCheck className="h-3 w-3 mr-1.5" />
-                10% Off — Recurring Service
+                {TEXT_PROMO_LABEL} with texted code
               </Badge>
             </div>
 
@@ -302,7 +295,7 @@ export default function BookingOffer() {
                 <span className="text-lg text-muted-foreground">/visit</span>
               </div>
               <p className="text-sm text-primary font-medium mt-2">
-                You save ${recurringSavings} every visit!
+                Save ${recurringSavings} per visit with your texted promo code.
               </p>
               <p className="text-sm text-muted-foreground mt-1">
                 Pay only ${Math.round(recurringPrice * 0.25)} today (25% deposit)

@@ -5,6 +5,7 @@ import { Calculator, DollarSign, Sparkles } from 'lucide-react';
 import { formatPrice } from '@/lib/pricing-utils';
 import { DEFAULT_PRICING_CONFIG } from '@/lib/new-pricing-system';
 import { getPriceQuote } from '@/lib/pricing-adapter';
+import { TEXT_PROMO_CODE_MESSAGE, TEXT_PROMO_LABEL } from '@/lib/promotional-offer';
 import { cn } from '@/lib/utils';
 
 interface PricingSummaryCardProps {
@@ -119,17 +120,8 @@ export function PricingSummaryCard({
     }
   }
 
-  // Get base price and discount info from the new pricing result
-  const showDiscount = pricingResult.discountedPrice > 0;
-
-  // Detect if this is a deep cleaning service
-  const isDeepCleaning = serviceTypeId === 'deep';
-
-  // Calculate deep clean discount if applicable
-  const deepCleanDiscount = isDeepCleaning ? 25 : 0;
-  const priceBeforeDeepCleanDiscount = isDeepCleaning 
-    ? pricingResult.discountedPrice + 25  // Add back the $25 discount
-    : pricingResult.discountedPrice;
+  const showDiscount = pricingResult.discountAmount > 0;
+  const priceBeforePromoDiscount = pricingResult.basePrice || pricingResult.discountedPrice;
 
   return (
     <Card className={cn("shadow-lg border-primary/20", className)}>
@@ -151,28 +143,19 @@ export function PricingSummaryCard({
           </div>
         )}
 
-        {/* Deep Clean Discount Banner */}
-        {isDeepCleaning && (
-          <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3 text-center">
-            <p className="text-sm font-semibold text-blue-600">
-              ✨ Deep Cleaning Special: $25 OFF ✨
-            </p>
-          </div>
-        )}
-        
-        {/* Standard One-Time Discount Banner */}
-        {serviceTypeId === 'regular' && frequencyId === 'one_time' && (
-          <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-3 text-center">
-            <p className="text-sm font-semibold text-green-600">
-              ✨ First-Time Special: 10% OFF ✨
+        {/* Promo Banner */}
+        {showDiscount && (
+          <div className="bg-primary/10 border border-primary/20 rounded-lg p-3 text-center">
+            <p className="text-sm font-semibold text-primary">
+              ✨ {TEXT_PROMO_LABEL} with your texted promo code ✨
             </p>
           </div>
         )}
 
         {/* Recurring Frequency Discount Banner */}
-        {showDiscount && frequencyId !== 'one_time' && (
-          <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-3 text-center">
-            <p className="text-sm font-semibold text-green-600">
+        {showDiscount && frequencyId !== 'one_time' && serviceTypeId === 'regular' && (
+          <div className="bg-accent/20 border border-accent/30 rounded-lg p-3 text-center">
+            <p className="text-sm font-semibold text-accent-foreground">
               {frequencyId === 'weekly' && '✨ Save 15% with weekly service! ✨'}
               {frequencyId === 'bi_weekly' && '✨ Save 10% with bi-weekly service! ✨'}
               {frequencyId === 'monthly' && '✨ Save 5% with monthly service! ✨'}
@@ -180,37 +163,19 @@ export function PricingSummaryCard({
           </div>
         )}
 
-        {/* Pricing Breakdown - Show if deep cleaning */}
-        {isDeepCleaning && (
+        {/* Pricing Breakdown */}
+        {showDiscount && (
           <div className="space-y-2 pt-2">
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Base Price</span>
-              <span className="font-medium">{formatPrice(priceBeforeDeepCleanDiscount)}</span>
+              <span className="font-medium">{formatPrice(priceBeforePromoDiscount)}</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-blue-600 font-medium flex items-center gap-1">
+              <span className="text-primary font-medium flex items-center gap-1">
                 <Sparkles className="h-3 w-3" />
-                Deep Clean Discount ($25)
+                Promo Discount ({TEXT_PROMO_LABEL})
               </span>
-              <span className="font-medium text-blue-600">-{formatPrice(deepCleanDiscount)}</span>
-            </div>
-            <Separator className="my-2" />
-          </div>
-        )}
-        
-        {/* Standard One-Time Discount Breakdown */}
-        {serviceTypeId === 'regular' && frequencyId === 'one_time' && (
-          <div className="space-y-2 pt-2">
-            <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">Base Price</span>
-              <span className="font-medium">{formatPrice(pricingResult.discountedPrice / 0.90)}</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-green-600 font-medium flex items-center gap-1">
-                <Sparkles className="h-3 w-3" />
-                First-Time Discount (10%)
-              </span>
-              <span className="font-medium text-green-600">-{formatPrice(pricingResult.discountedPrice * 0.1111)}</span>
+              <span className="font-medium text-primary">-{formatPrice(pricingResult.discountAmount)}</span>
             </div>
             <Separator className="my-2" />
           </div>
@@ -260,14 +225,15 @@ export function PricingSummaryCard({
             <p className="text-xs text-muted-foreground text-center pt-2">
               💳 Deposits get priority scheduling. Or choose to pay after service.
             </p>
+            <p className="text-xs text-primary text-center">{TEXT_PROMO_CODE_MESSAGE}</p>
           </div>
         </div>
 
         {/* Deep Clean Recommendation */}
         {serviceTypeId === 'regular' && (
           <div className="pt-3 border-t border-border/50">
-            <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3">
-              <p className="text-xs text-amber-700">
+            <div className="bg-accent/20 border border-accent/30 rounded-lg p-3">
+              <p className="text-xs text-accent-foreground">
                 💡 <strong>Tip:</strong> If your home hasn't been professionally cleaned in over 2 months, 
                 we recommend starting with a Deep Cleaning for best results.
               </p>
