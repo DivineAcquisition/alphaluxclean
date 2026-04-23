@@ -1,6 +1,7 @@
 import React from 'react';
 import { TrendingDown, Info } from 'lucide-react';
 import { HOME_SIZE_RANGES, DEFAULT_PRICING_CONFIG, type StateConfig } from '@/lib/new-pricing-system';
+import { TEXT_PROMO_LABEL } from '@/lib/promotional-offer';
 import { cn } from '@/lib/utils';
 
 interface PriceRangeIndicatorProps {
@@ -64,8 +65,7 @@ export function PriceRangeIndicator({
   const { min, max, isNarrowed } = getPriceRange();
   const serviceType = DEFAULT_PRICING_CONFIG.serviceTypes.find(s => s.id === serviceTypeId);
   
-  // Calculate discount
-  const discount = serviceTypeId === 'regular' ? 0.10 : serviceTypeId === 'deep' ? 0.20 : 0;
+  const discount = serviceTypeId && serviceTypeId !== 'move_in_out' ? 0.5 : 0.5;
   const discountedMin = discount > 0 ? Math.round(min * (1 - discount)) : min;
   const discountedMax = discount > 0 ? Math.round(max * (1 - discount)) : max;
   const savingsAmount = discount > 0 ? max - discountedMax : 0;
@@ -96,7 +96,7 @@ export function PriceRangeIndicator({
                   ? "bg-green-500/10 text-green-700 border border-green-500/20"
                   : "bg-primary/20 text-primary border border-primary/30"
               )}>
-                {discount === 0.10 ? '10% OFF' : '20% OFF'} First Clean
+                {TEXT_PROMO_LABEL} with texted code
               </div>
             )}
           </div>
@@ -113,7 +113,7 @@ export function PriceRangeIndicator({
             </div>
             {discount > 0 && (
               <p className="text-xs text-green-600 dark:text-green-400 font-medium">
-                Save up to ${savingsAmount} with this offer!
+                Save up to ${savingsAmount} with the promo code texted to you!
               </p>
             )}
           </div>

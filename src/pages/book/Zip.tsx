@@ -240,13 +240,13 @@ export default function BookingZip() {
           
           <div className="text-center mb-8">
             <h1 className="text-2xl md:text-5xl font-jakarta font-bold mb-3 leading-tight">
-              New Customer Special: $25 OFF Your First Deep Clean
+              New Customer Special: 50% OFF Your First Cleaning
               <span className="block text-primary mt-2">
-                + 10% Off Recurring Service
+                with the promo code texted to you
               </span>
             </h1>
             <p className="text-muted-foreground text-lg md:text-xl">
-              Enter your ZIP to get started and claim your discount
+              Enter your ZIP to get started and unlock your promo-code pricing
             </p>
           </div>
           
