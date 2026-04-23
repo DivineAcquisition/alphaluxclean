@@ -40,7 +40,7 @@ export function PriceTeaserBanner() {
               <span>
                 Standard cleaning{' '}
                 <span className="font-semibold text-primary">${minRegularDiscounted}</span>
-                 <span className="ml-1.5 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-green-500/10 text-green-700 border border-green-500/20">
+                 <span className="ml-1.5 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-accent/20 text-accent-foreground border border-accent/30">
                    {TEXT_PROMO_LABEL}
                 </span>
               </span>

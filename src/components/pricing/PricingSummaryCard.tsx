@@ -145,8 +145,8 @@ export function PricingSummaryCard({
 
         {/* Promo Banner */}
         {showDiscount && (
-          <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3 text-center">
-            <p className="text-sm font-semibold text-blue-600">
+          <div className="bg-primary/10 border border-primary/20 rounded-lg p-3 text-center">
+            <p className="text-sm font-semibold text-primary">
               ✨ {TEXT_PROMO_LABEL} with your texted promo code ✨
             </p>
           </div>
@@ -154,8 +154,8 @@ export function PricingSummaryCard({
 
         {/* Recurring Frequency Discount Banner */}
         {showDiscount && frequencyId !== 'one_time' && serviceTypeId === 'regular' && (
-          <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-3 text-center">
-            <p className="text-sm font-semibold text-green-600">
+          <div className="bg-accent/20 border border-accent/30 rounded-lg p-3 text-center">
+            <p className="text-sm font-semibold text-accent-foreground">
               {frequencyId === 'weekly' && '✨ Save 15% with weekly service! ✨'}
               {frequencyId === 'bi_weekly' && '✨ Save 10% with bi-weekly service! ✨'}
               {frequencyId === 'monthly' && '✨ Save 5% with monthly service! ✨'}
@@ -171,11 +171,11 @@ export function PricingSummaryCard({
               <span className="font-medium">{formatPrice(priceBeforePromoDiscount)}</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-blue-600 font-medium flex items-center gap-1">
+              <span className="text-primary font-medium flex items-center gap-1">
                 <Sparkles className="h-3 w-3" />
                 Promo Discount ({TEXT_PROMO_LABEL})
               </span>
-              <span className="font-medium text-blue-600">-{formatPrice(pricingResult.discountAmount)}</span>
+              <span className="font-medium text-primary">-{formatPrice(pricingResult.discountAmount)}</span>
             </div>
             <Separator className="my-2" />
           </div>
@@ -232,8 +232,8 @@ export function PricingSummaryCard({
         {/* Deep Clean Recommendation */}
         {serviceTypeId === 'regular' && (
           <div className="pt-3 border-t border-border/50">
-            <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3">
-              <p className="text-xs text-amber-700">
+            <div className="bg-accent/20 border border-accent/30 rounded-lg p-3">
+              <p className="text-xs text-accent-foreground">
                 💡 <strong>Tip:</strong> If your home hasn't been professionally cleaned in over 2 months, 
                 we recommend starting with a Deep Cleaning for best results.
               </p>

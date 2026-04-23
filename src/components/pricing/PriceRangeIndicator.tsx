@@ -65,7 +65,7 @@ export function PriceRangeIndicator({
   const { min, max, isNarrowed } = getPriceRange();
   const serviceType = DEFAULT_PRICING_CONFIG.serviceTypes.find(s => s.id === serviceTypeId);
   
-  const discount = serviceTypeId && serviceTypeId !== 'move_in_out' ? 0.5 : 0.5;
+  const discount = 0.5;
   const discountedMin = discount > 0 ? Math.round(min * (1 - discount)) : min;
   const discountedMax = discount > 0 ? Math.round(max * (1 - discount)) : max;
   const savingsAmount = discount > 0 ? max - discountedMax : 0;
@@ -93,7 +93,7 @@ export function PriceRangeIndicator({
               <div className={cn(
                 "px-2 py-0.5 rounded-full text-[10px] md:text-xs font-medium",
                 serviceTypeId === 'regular' 
-                  ? "bg-green-500/10 text-green-700 border border-green-500/20"
+                  ? "bg-accent/20 text-accent-foreground border border-accent/30"
                   : "bg-primary/20 text-primary border border-primary/30"
               )}>
                 {TEXT_PROMO_LABEL} with texted code
@@ -112,7 +112,7 @@ export function PriceRangeIndicator({
               </span>
             </div>
             {discount > 0 && (
-              <p className="text-xs text-green-600 dark:text-green-400 font-medium">
+              <p className="text-xs text-accent-foreground font-medium">
                 Save up to ${savingsAmount} with the promo code texted to you!
               </p>
             )}
