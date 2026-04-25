@@ -16,7 +16,7 @@ export function BookingProgressBar({ currentStep, totalSteps }: BookingProgressB
         {/* Logo and Call Button Header */}
         <div className="flex items-center justify-between mb-4">
           <a href="/" className="flex items-center">
-            <img src={logo} alt="AlphaLux Clean" className="h-8 md:h-10" />
+            <img src={(logo as any).src ?? logo} alt="AlphaLux Clean" className="h-8 md:h-10" />
           </a>
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" asChild>

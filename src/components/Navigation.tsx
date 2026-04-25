@@ -17,7 +17,7 @@ export function Navigation({ minimal = false }: NavigationProps) {
         <div className="flex h-16 items-center justify-between">
           {/* Logo/Brand */}
           <Link to="/" className="flex items-center justify-center space-x-3">
-            <img src={logo} alt="AlphaLux Cleaning" width="64" height="64" className="h-10 w-auto md:h-11 md:w-auto object-contain rounded-xl" />
+            <img src={(logo as any).src ?? logo} alt="AlphaLux Cleaning" width="64" height="64" className="h-10 w-auto md:h-11 md:w-auto object-contain rounded-xl" />
           </Link>
 
           {/* Right Section - Hidden in minimal mode */}

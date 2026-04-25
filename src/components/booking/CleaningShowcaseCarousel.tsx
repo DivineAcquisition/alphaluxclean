@@ -89,7 +89,7 @@ export function CleaningShowcaseCarousel() {
                 <div className="relative">
                   <div className="aspect-[16/9] md:aspect-[21/9] overflow-hidden bg-muted">
                     <img
-                      src={image.src}
+                      src={(image.src as any)?.src ?? image.src}
                       alt={image.alt}
                       className="w-full h-full object-cover"
                       loading="lazy"

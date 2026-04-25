@@ -15,7 +15,7 @@ import * as React from "npm:react@18.3.1";
 
 interface EmailBaseProps {
   preview: string;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   isMarketing?: boolean;
 }
 

@@ -10,6 +10,7 @@ import { useFacebookPixel } from '@/hooks/useFacebookPixel';
 import { HOME_SIZE_RANGES, resolveHomeSizeId } from '@/lib/new-pricing-system';
 import {
   NEW_CUSTOMER_PROMO_ACTIVE,
+  NEW_CUSTOMER_PROMO_CODE,
   NEW_CUSTOMER_PROMO_CODE as FALLBACK_PROMO_CODE,
   NEW_CUSTOMER_PROMO_PERCENT,
   previewPromoDiscount,
@@ -33,7 +34,7 @@ import {
   type TimeSlotId,
 } from '@/components/booking/OfferDateTimePicker';
 
-type OfferType = 'standard' | 'deep_clean' | 'recurring';
+type OfferType = 'standard_clean' | 'deep_clean' | 'recurring';
 
 interface SelectedOfferState {
   offerType: OfferType;
@@ -295,9 +296,8 @@ export default function BookingOffer() {
       service_type: serviceType,
       frequency,
       base_price: basePrice,
-      service_date: scheduledDate,
-      time_slot: scheduledTimeSlot,
-      promo_code: NEW_CUSTOMER_PROMO_ACTIVE ? NEW_CUSTOMER_PROMO_CODE : '',
+      preferred_date: scheduledDate,
+      preferred_time: scheduledTimeSlot,
     });
 
     navigate('/book/checkout');
@@ -420,7 +420,7 @@ export default function BookingOffer() {
         <div id="service-cards" className="grid gap-6 md:gap-8 md:grid-cols-3">
           {/* Standard Clean — One Time */}
           <OfferCard
-            selected={selectedOffer === 'standard'}
+            selected={selectedOffer === 'standard_clean'}
             icon={Home}
             title="Standard Clean"
             description="One-time refresh of the spaces you use every day"
@@ -446,7 +446,7 @@ export default function BookingOffer() {
             }
             onSelect={() =>
               handleSelectOffer(
-                'standard',
+                'standard_clean',
                 NEW_CUSTOMER_PROMO_ACTIVE
                   ? `Standard Clean — ${NEW_CUSTOMER_PROMO_PERCENT}% New Customer Special`
                   : 'Standard Clean',
