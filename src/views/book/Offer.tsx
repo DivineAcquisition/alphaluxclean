@@ -10,6 +10,7 @@ import { useFacebookPixel } from '@/hooks/useFacebookPixel';
 import { HOME_SIZE_RANGES, resolveHomeSizeId } from '@/lib/new-pricing-system';
 import {
   NEW_CUSTOMER_PROMO_ACTIVE,
+  NEW_CUSTOMER_PROMO_CODE,
   NEW_CUSTOMER_PROMO_CODE as FALLBACK_PROMO_CODE,
   NEW_CUSTOMER_PROMO_PERCENT,
   previewPromoDiscount,
