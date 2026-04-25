@@ -420,7 +420,7 @@ export default function BookingOffer() {
         <div id="service-cards" className="grid gap-6 md:gap-8 md:grid-cols-3">
           {/* Standard Clean — One Time */}
           <OfferCard
-            selected={selectedOffer === 'standard'}
+            selected={selectedOffer === 'standard_clean'}
             icon={Home}
             title="Standard Clean"
             description="One-time refresh of the spaces you use every day"
@@ -446,7 +446,7 @@ export default function BookingOffer() {
             }
             onSelect={() =>
               handleSelectOffer(
-                'standard',
+                'standard_clean',
                 NEW_CUSTOMER_PROMO_ACTIVE
                   ? `Standard Clean — ${NEW_CUSTOMER_PROMO_PERCENT}% New Customer Special`
                   : 'Standard Clean',
