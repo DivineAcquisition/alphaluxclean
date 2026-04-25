@@ -7,7 +7,7 @@ export function DashboardHeader() {
       {/* Main Header */}
       <div className="text-center space-y-4">
         <div className="flex justify-center mb-4">
-          <img src={logo} alt="AlphaLux Clean" className="h-24 w-auto rounded-xl" />
+          <img src={(logo as any).src ?? logo} alt="AlphaLux Clean" className="h-24 w-auto rounded-xl" />
         </div>
         <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
           AlphaLux Clean

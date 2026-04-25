@@ -34,7 +34,7 @@ import {
   type TimeSlotId,
 } from '@/components/booking/OfferDateTimePicker';
 
-type OfferType = 'standard' | 'deep_clean' | 'recurring';
+type OfferType = 'standard_clean' | 'deep_clean' | 'recurring';
 
 interface SelectedOfferState {
   offerType: OfferType;
@@ -296,9 +296,8 @@ export default function BookingOffer() {
       service_type: serviceType,
       frequency,
       base_price: basePrice,
-      service_date: scheduledDate,
-      time_slot: scheduledTimeSlot,
-      promo_code: NEW_CUSTOMER_PROMO_ACTIVE ? NEW_CUSTOMER_PROMO_CODE : '',
+      preferred_date: scheduledDate,
+      preferred_time: scheduledTimeSlot,
     });
 
     navigate('/book/checkout');
