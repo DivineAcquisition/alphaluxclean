@@ -284,6 +284,7 @@ export type Database = {
           square_customer_id: string | null
           square_payment_id: string | null
           status: Database["public"]["Enums"]["booking_status"] | null
+          stripe_account_slug: string
           stripe_balance_invoice_id: string | null
           stripe_checkout_session_id: string | null
           stripe_payment_intent_id: string | null
@@ -364,6 +365,7 @@ export type Database = {
           square_customer_id?: string | null
           square_payment_id?: string | null
           status?: Database["public"]["Enums"]["booking_status"] | null
+          stripe_account_slug?: string
           stripe_balance_invoice_id?: string | null
           stripe_checkout_session_id?: string | null
           stripe_payment_intent_id?: string | null
@@ -444,6 +446,7 @@ export type Database = {
           square_customer_id?: string | null
           square_payment_id?: string | null
           status?: Database["public"]["Enums"]["booking_status"] | null
+          stripe_account_slug?: string
           stripe_balance_invoice_id?: string | null
           stripe_checkout_session_id?: string | null
           stripe_payment_intent_id?: string | null
@@ -541,6 +544,7 @@ export type Database = {
           referral_link: string | null
           square_customer_id: string | null
           state: string | null
+          stripe_account_slug: string | null
           stripe_customer_id: string | null
           user_id: string | null
         }
@@ -570,6 +574,7 @@ export type Database = {
           referral_link?: string | null
           square_customer_id?: string | null
           state?: string | null
+          stripe_account_slug?: string | null
           stripe_customer_id?: string | null
           user_id?: string | null
         }
@@ -599,6 +604,7 @@ export type Database = {
           referral_link?: string | null
           square_customer_id?: string | null
           state?: string | null
+          stripe_account_slug?: string | null
           stripe_customer_id?: string | null
           user_id?: string | null
         }
@@ -643,6 +649,7 @@ export type Database = {
       email_jobs: {
         Row: {
           attempts: number
+          booking_id: string | null
           category: string
           created_at: string
           event_id: string | null
@@ -650,15 +657,18 @@ export type Database = {
           last_error: string | null
           payload: Json
           provider_message_id: string | null
+          scheduled_for: string | null
           sent_at: string | null
           status: string
           template_name: string
           to_email: string
           to_name: string | null
+          trigger_kind: string | null
           updated_at: string
         }
         Insert: {
           attempts?: number
+          booking_id?: string | null
           category?: string
           created_at?: string
           event_id?: string | null
@@ -666,15 +676,18 @@ export type Database = {
           last_error?: string | null
           payload?: Json
           provider_message_id?: string | null
+          scheduled_for?: string | null
           sent_at?: string | null
           status?: string
           template_name?: string
           to_email: string
           to_name?: string | null
+          trigger_kind?: string | null
           updated_at?: string
         }
         Update: {
           attempts?: number
+          booking_id?: string | null
           category?: string
           created_at?: string
           event_id?: string | null
@@ -682,14 +695,24 @@ export type Database = {
           last_error?: string | null
           payload?: Json
           provider_message_id?: string | null
+          scheduled_for?: string | null
           sent_at?: string | null
           status?: string
           template_name?: string
           to_email?: string
           to_name?: string | null
+          trigger_kind?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "email_jobs_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       email_suppressions: {
         Row: {
@@ -881,6 +904,74 @@ export type Database = {
           {
             foreignKeyName: "integration_logs_booking_id_fkey"
             columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lead_promo_assignments: {
+        Row: {
+          city: string | null
+          code: string
+          created_at: string
+          email: string
+          email_normalized: string | null
+          first_name: string | null
+          ghl_contact_id: string | null
+          id: string
+          last_name: string | null
+          percent_off: number
+          phone: string | null
+          redeemed_at: string | null
+          redeemed_booking_id: string | null
+          state: string | null
+          updated_at: string
+          utms: Json | null
+          zip_code: string | null
+        }
+        Insert: {
+          city?: string | null
+          code: string
+          created_at?: string
+          email: string
+          email_normalized?: string | null
+          first_name?: string | null
+          ghl_contact_id?: string | null
+          id?: string
+          last_name?: string | null
+          percent_off?: number
+          phone?: string | null
+          redeemed_at?: string | null
+          redeemed_booking_id?: string | null
+          state?: string | null
+          updated_at?: string
+          utms?: Json | null
+          zip_code?: string | null
+        }
+        Update: {
+          city?: string | null
+          code?: string
+          created_at?: string
+          email?: string
+          email_normalized?: string | null
+          first_name?: string | null
+          ghl_contact_id?: string | null
+          id?: string
+          last_name?: string | null
+          percent_off?: number
+          phone?: string | null
+          redeemed_at?: string | null
+          redeemed_booking_id?: string | null
+          state?: string | null
+          updated_at?: string
+          utms?: Json | null
+          zip_code?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_promo_assignments_redeemed_booking_id_fkey"
+            columns: ["redeemed_booking_id"]
             isOneToOne: false
             referencedRelation: "bookings"
             referencedColumns: ["id"]
